@@ -1,28 +1,46 @@
-(function localFileVideoPlayer() {
-  'use strict'
-  var URL = window.URL || window.webkitURL
-  var displayMessage = function(message, isError) {
-    var element = document.querySelector('#message')
-    element.innerHTML = message
-    element.className = isError ? 'error' : 'info'
-  }
-  var playSelectedFile = function(event) {
-    var file = this.files[0]
-    var type = file.type
-    var videoNode = document.querySelector('video')
-    var canPlay = videoNode.canPlayType(type)
-    if (canPlay === '') canPlay = 'no'
-    var message = 'Can play type "' + type + '": ' + canPlay
-    var isError = canPlay === 'no'
-    displayMessage(message, isError)
+(function localFileVideoPlayerInit(win) {
+    var URL = win.URL || win.webkitURL,
+        displayMessage = (function displayMessageInit() {
+            var node = document.querySelector('#message');
 
-    if (isError) {
-      return
-    }
+            return function displayMessage(message, isError) {
+                node.innerHTML = message;
+                node.className = isError ? 'error' : 'info';
+            };
+        }()),
+        playSelectedFile = function playSelectedFileInit(event) {
+            var file = this.files[0];
 
-    var fileURL = URL.createObjectURL(file)
-    videoNode.src = fileURL
-  }
-  var inputNode = document.querySelector('input')
-  inputNode.addEventListener('change', playSelectedFile, false)
-})()
+            var type = file.type;
+
+            var videoNode = document.querySelector('video');
+
+            var canPlay = videoNode.canPlayType(type);
+
+            canPlay = (canPlay === '' ? 'no' : canPlay);
+
+            var message = 'Can play type "' + type + '": ' + canPlay;
+
+            var isError = canPlay === 'no';
+
+            displayMessage(message, isError);
+
+            if (isError) {
+                return;
+            }
+
+            var fileURL = URL.createObjectURL(file);
+
+            videoNode.src = fileURL;
+        },
+        inputNode = document.querySelector('input');
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    if (!URL) {
+        displayMessage('Your browser is not ' + 
+           '<a href="http://caniuse.com/bloburls">supported</a>!', true);
+        
+        return;
+    }                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+    inputNode.addEventListener('change', playSelectedFile, false);
+}(window));
